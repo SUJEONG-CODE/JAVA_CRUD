@@ -326,6 +326,9 @@
 			    	 alert("파일을 등록해주세요.");
 			    	 return;
 			     }
+			      
+
+			     
 			 }
  
   			
@@ -701,7 +704,7 @@
 						<tr > 
 							<th   rowspan=2 class="active">파일이름
 							<td name=file_name align=center ><b>
- 					 		<c:forEach items="${onlyFileName}" var="onlyFileName"  varStatus="status">
+ 					 		<%-- <c:forEach items="${onlyFileName}" var="onlyFileName"  varStatus="status">
 	 				 	  		<div style='display: flex;' class='form-group filenamecnt' name="${status.index}" >
 							 	<c:out value="${onlyFileName}" escapeXml="true" default="${onlyFileName}"  />  
 							<!--  		<script>
@@ -715,15 +718,33 @@
 							 		</script> -->
  		 								<span style='text-align: right;'>
  
-<%-- 	 	 								 	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick="deleteFileData(${status.index})">삭제 </a>
- --%>	  									 	 
+	 	 								 	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick="deleteFileData(${status.index})">삭제 </a>
+	  									 	 
 	  									 
 		 								</span>
 							     
  								</div>
  							
 		 							 
-							</c:forEach>   
+							</c:forEach>   	 --%>
+							
+							<script>
+											var list1 = new Array();
+				
+											<c:forEach items="${onlyFileName}" var="onlyFileName">
+				
+											list1.push("${onlyFileName}");
+				
+											</c:forEach>
+				
+											for ( var i = 0; i < list1.length; i++) {
+				
+												$("[name=file_name]").append("<div style='display: flex;' class='form-group filenamecnt'><td name=uploadBtn>"+list1[i]+"</td><input type=hidden  readonly name=uploadBtn value="+list1[i]+">")
+				
+											}
+ 							</script>
+ 							 		
+ 							 			 
 							 	<div align=right>
  
 <%-- 	 	 								 	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick="deleteFileData(${status.index})">삭제 </a>
@@ -731,7 +752,22 @@
 	  									 
  							 
  	 					<tr>
-                        <td >
+                        <td name=onlytempname >
+                        			<script>
+											var list2 = new Array();
+				
+											<c:forEach items="${onlyTempName}" var="onlyTempName">
+				
+												list2.push("${onlyTempName}");
+				
+											</c:forEach>
+				
+											for ( var i = 0; i < list2.length; i++) {
+				
+												$("[name=onlytempname]").append("<input type=hidden name=onlyTempName value="+list2[i]+">")
+				
+											}
+ 							 		</script>
                            	<div style="color:#aaa; text-align: left;" class='helpA'><br>"파일업로드는 최대 5개까지 가능합니다"</div> 
                           
                            <div class="form-group" id="file-list">
@@ -743,7 +779,7 @@
  	 
  							 <div style='display: flex;' class="file-group"  name="fileDeleteOriginal">
 					           <input type="file" id="uploadBtn" class=1 name="uploadBtn"> 
-					           <span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' onclick="fileDeleteOriginal()">삭제</a></span>
+					     <!--       <span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' onclick="fileDeleteOriginal()">삭제</a></span> -->
 					        </div>  
 					        <br>
  						 </div>

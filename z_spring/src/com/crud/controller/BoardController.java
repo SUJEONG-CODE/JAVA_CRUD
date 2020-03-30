@@ -337,6 +337,17 @@ public class BoardController {
 				boardUpDelCnt = this.boardService.updateBoard(boardDTO);
 				System.out.println(boardUpDelCnt);
 				if (boardUpDelCnt > 0) {
+
+					for (int i = 0; i < boardDTO.getOnlyTempName().length; i++) {
+
+						String path = "C:/imagecollection/";
+						String temp_nameDel = boardDTO.getOnlyTempName()[i];
+						File fileDel = new File(path + temp_nameDel);
+						if (fileDel.exists() == true) {
+							fileDel.delete();
+						}
+					}
+
 					// UpdeleteFileBoardCnt=this.boardService.updateFileBoard(boardDTO);
 					UpdeleteFileBoardCnt = this.boardService.deleteFileBoard(boardDTO);
 					System.out.println("UpdeleteFileBoardCnt?" + UpdeleteFileBoardCnt);
@@ -345,13 +356,18 @@ public class BoardController {
 
 						// String profilePath = "C:/stu_2020.02.12_KSJ/z_spring/WebContent/WEB-INF/resources/imagecollection/";
 						String profilePath = "C:/imagecollection/";
-
 						File dir = new File(profilePath);
 						if (!dir.isDirectory()) {
 							dir.mkdir();
 						}
 
 						List<MultipartFile> mf = multi.getFiles("uploadBtn");
+
+						/*
+						 * for (int i = 0; i < boardDTO.getOnlyFileName().length; i++) {
+						 * 
+						 * String temp_nameUp = boardDTO.getOnlyFileName[i]; mf.add(temp_nameUp); }
+						 */
 
 						System.out.println(mf);
 
@@ -438,6 +454,16 @@ public class BoardController {
 			} else {
 				System.out.println("<deleteBoard 而⑦듃濡ㅻ윭>");
 				// System.out.println(boardDTO.getGroup_count());
+
+				for (int i = 0; i < boardDTO.getOnlyTempName().length; i++) {
+
+					String path = "C:/imagecollection/";
+					String temp_nameDel = boardDTO.getOnlyTempName()[i];
+					File fileDel = new File(path + temp_nameDel);
+					if (fileDel.exists() == true) {
+						fileDel.delete();
+					}
+				}
 
 				boardUpDelCnt = this.boardService.deleteBoard(boardDTO);
 
