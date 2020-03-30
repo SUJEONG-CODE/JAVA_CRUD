@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- *********************************************************************** -->
+<!-- [로그인 아이디, 암호의 존재개수 ] 검색하는 select문을 내포한 <select> 태그 선언 -->
+<!-- *********************************************************************** -->
+
+<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+<!-- mapper 태그 선언 -->
+<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<!-- namespace 속성값으로 [DAO 인터페이스명]이 오며 -->
+	<!-- [DAO 인터페이스] 메소드명과 동일한 id 값을 소유한 태그를 내포하고 있다. -->
+<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+
+<!-- 
+		=================================
+		
+		<select> 태그 속성 설명
+		=================================
+			id='getAdminCnt'			>> SQl 구문의 고유 아이디값 설정. DAO 클래스의 메소드 이름과 동일
+			parameterType="hashmap"		>> SQl 구문에 삽입될 외부 데이터의 자료형 설정
+			resultType="int"			>> SQl 구문의 실행 후 리턴값 자료형 설정
+		===========================================================
+		SQL 구문안의  #{HashMap객체키값명} 설명
+		===========================================================
+			키값에 대응하는 데이터 문자열을 삽입하라는 뜻이다.
+			만약 문자면 '(싱글쿼트)로 감싸 삽입하고 아니면 그대로 삽입한다.
+		===========================================================
+		SQL 구문안의 ${HashMap객체 키값명} 설명
+		===========================================================
+			키값에 대응하는 데이터의 종류에 관계없이 데이터를 그대로 삽입  hashmap
+ -->
+
+
+<mapper namespace="com.crud.dao.LoginDAO">
+	<select id='getAdminCnt' parameterType="hashmap" resultType="int">
+		select count(*) from admin where admin_id=#{admin_id} and pwd=#{pwd}
+	</select>
+
+	<insert id='insertJoinCnt' parameterType="com.crud.dto.JoinDTO">
+		insert into admin(
+			admin_id 		
+			,pwd 		
+			,admin_name
+			,admin_phonenum 		
+			,admin_email 			
+			,admin_postcode 			
+			,admin_roadaddress
+			,admin_jibunaddress
+			,admin_address
+		) 
+		values (
+			#{admin_id}
+			,#{pwd}
+			,#{admin_name}
+			,#{admin_phonenum}
+			,#{admin_email}
+			,#{admin_postcode}
+			,#{admin_roadaddress}
+			,#{admin_jibunaddress}
+			,#{admin_address}
+ 	)
+	</insert>
+	
+	<!-- 아이디 암호 찾기 -->
+	<select id='getfindIDPasswordCnt' parameterType="hashmap" resultType="int">
+		select 
+			count(*) 
+		from admin 
+		where admin_name=#{admin_name} and admin_phonenum=#{admin_phonenum}
+	</select>
+	
+	
+	<select id='getfindIDPwd' parameterType="hashmap" resultType="com.crud.dto.SearchIDPwdDTO">
+		select 
+			admin_id	as "admin_id"
+			,pwd		as "pwd"
+		from admin
+		where admin_name=#{admin_name} and admin_phonenum=#{admin_phonenum}
+	</select>
+	
+</mapper>
