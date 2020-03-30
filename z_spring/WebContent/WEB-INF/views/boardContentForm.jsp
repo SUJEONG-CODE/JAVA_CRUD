@@ -157,7 +157,7 @@ function imagePopup(type) {
 	    
  
 $(document).ready(function(){
-		 alert(11)
+		  
 				 $('[name=checkCommentPwd]').click(function() {
 					 jQuery('#layer2').attr('style','display:inline');
 					 $('#layer2').find("#popup").find("[name=comment_password]").focus();
