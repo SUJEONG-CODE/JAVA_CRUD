@@ -394,11 +394,24 @@ public class BoardDAOImpl implements BoardDAO {
 	};
 
 	@Override
+	public int getfilenameUpCnt(HashMap<String, Object> hm) {
+
+		int newEmpInsertCnt = this.sqlSession.insert(sqlSessionPath + "getfilenameUpCnt", hm);
+		return newEmpInsertCnt;
+	};
+
+	@Override
 	public List<Map<String, Integer>> getEmp_noForFile(FileUpDTO fileUpDTO) {
 
 		List<Map<String, Integer>> emp_no1 = this.sqlSession.selectList(sqlSessionPath + "getEmp_noForFile", fileUpDTO);
 		return emp_no1;
 
+	};
+
+	@Override
+	public int deleteFileBoardCnt(String onlytempname) {
+		int boardUpDelCnt = this.sqlSession.delete(sqlSessionPath + "deleteFileBoardCnt", onlytempname);
+		return boardUpDelCnt;
 	};
 
 }

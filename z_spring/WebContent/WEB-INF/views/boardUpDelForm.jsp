@@ -350,8 +350,9 @@
 		                type: 'POST',
 		                success: function(upDelCnt){
 		                	if( upDel=="up"){
-								
-								if(upDelCnt == 1){
+
+			                				
+								if(upDelCnt == 1 || upDelCnt ==0 ){
 									//alert("게시글의 수정이 완료되었습니다.");
 								 	location.replace('/z_spring/boardListForm.do');
 								}
@@ -362,9 +363,10 @@
 									alert("비밀번호가 잘못 입력 되었습니다.");
 								}
 								else {
+				
 									alert("서버쪽 DB 연동 실패!");
 								}
-								
+			 
 						}
 							else if(upDel=="del"){
 								if(upDelCnt == 1){
@@ -468,16 +470,39 @@
 
 
 		function deleteFileData(cntFile){
-			 
-			 var countNum=cntFile
-			 $("[name="+countNum+"]").remove();
-			// alert($(this).parent().siblings().val());
 		 
-		}
+			 var countNum=cntFile
+	 
+			// alert($(this).parent().siblings().val());
+ 
+			 
+			 var str="onlyTempName="+$(".onlyTempName"+cntFile).val();
+			 $("[name="+cntFile+"]").remove();
+			
+	  		$.ajax({
+				url : "/z_spring/fileDelProc.do"	
+				, type : "post"
+				, data : str
+				, success : function(upDelCnt){
+					if(upDelCnt == 1){
+						 $("[name="+cntFile+"]").remove();
+					 
+					}else{
 
-		function alldeleteFileData(){
-			$("[name=file_name]").remove();
-			}
+						alert("삭제실패");
+					}
+				}
+				, error : function(request,status,error){
+					alert("서버 접속 실패");
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+					 
+				}
+				
+			}); 
+ 
+ 
+ 
+		}
 
 		var cnt=1;
 
@@ -739,23 +764,12 @@
 				
 											for ( var i = 0; i < list1.length; i++) {
 				
-												$("[name=file_name]").append("<div style='display: flex;' class='form-group filenamecnt'><td name=uploadBtn>"+list1[i]+"</td><input type=hidden  readonly name=uploadBtn value="+list1[i]+">")
+												$("[name=file_name]").append("<div style='display: flex;' name="+i+" class='form-group filenamecnt'><td name=uploadBtn>"+list1[i]+"</td><div align=right>	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick='deleteFileData("+i+")'>삭제 </a><input type=hidden  readonly name=onlyFileName value="+list1[i]+">")
 				
 											}
- 							</script>
- 							 		
- 							 			 
-							 	<div align=right>
- 
-<%-- 	 	 								 	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick="deleteFileData(${status.index})">삭제 </a>
- --%>	  									 	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick="alldeleteFileData()">삭제 </a>
-	  									 
- 							 
- 	 					<tr>
-                        <td name=onlytempname >
-                        			<script>
+
 											var list2 = new Array();
-				
+											
 											<c:forEach items="${onlyTempName}" var="onlyTempName">
 				
 												list2.push("${onlyTempName}");
@@ -764,10 +778,14 @@
 				
 											for ( var i = 0; i < list2.length; i++) {
 				
-												$("[name=onlytempname]").append("<input type=hidden name=onlyTempName value="+list2[i]+">")
+												$("[name=file_name]").append("<input type=hidden class=onlyTempName"+i+" name=onlyTempName value="+list2[i]+">")
 				
 											}
- 							 		</script>
+ 							 
+ 							 </script>
+ 	 					<tr>
+                        <td name=tempname >
+                        			 
                            	<div style="color:#aaa; text-align: left;" class='helpA'><br>"파일업로드는 최대 5개까지 가능합니다"</div> 
                           
                            <div class="form-group" id="file-list">
@@ -779,7 +797,7 @@
  	 
  							 <div style='display: flex;' class="file-group"  name="fileDeleteOriginal">
 					           <input type="file" id="uploadBtn" class=1 name="uploadBtn"> 
-					     <!--       <span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' onclick="fileDeleteOriginal()">삭제</a></span> -->
+					           <span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' onclick="fileDeleteOriginal()">삭제</a></span> 
 					        </div>  
 					        <br>
  						 </div>

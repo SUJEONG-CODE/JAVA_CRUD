@@ -128,6 +128,7 @@ public class BoardController {
 		 * System.out.println(emp_no1); //ileUpDTO.setEmp_no( );
 		 */
 		if (boardRegCnt > 0) {
+
 			return "forward:/onlyFileUploadBoard.do";
 		}
 
@@ -156,7 +157,7 @@ public class BoardController {
 		} else {
 
 			for (int i = 0; i < mf.size(); i++) {
-
+				System.out.println("시작");
 				// �뙆�씪 以묐났紐� 泥섎━
 				String genId = UUID.randomUUID().toString();
 				// 蹂몃옒 �뙆�씪紐�
@@ -229,12 +230,10 @@ public class BoardController {
 			// [ BoardServiceImpl 媛앹껜 ]�쓽 getBoardDTO 硫붿냼�뱶 �샇異쒕줈
 			// 1媛쒖쓽 寃뚯떆�뙋 湲��쓣 BoardDTO 媛앹껜�뿉 �떞�븘�삤湲�
 			// ----------------------------------------------------------
-			System.out.println("goBoardContentForm�떆�옉");
 
 			Map<String, Integer> mapContent = new HashMap<String, Integer>();
 			mapContent.put("b_no", b_no);
 			mapContent.put("group_no", group_no);
-			System.out.println(group_no);
 
 			BoardDTO boardDTO = this.boardService.getBoardDTO(mapContent);
 
@@ -260,7 +259,6 @@ public class BoardController {
 			mav.addObject("file_cnt", file_cnt);
 			mav.addObject("onlyFileName", onlyFileName);
 			mav.addObject("onlyTempName", onlyTempName);
-			System.out.println("boardContentForm  출력");
 
 		} catch (Exception e) {
 
@@ -310,6 +308,31 @@ public class BoardController {
 		return mav;
 	}
 
+	@RequestMapping(value = "/fileDelProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
+			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
+			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
+	)
+	@ResponseBody
+	public int fileDelProc(@RequestParam(value = "onlyTempName") String onlytempname) {
+
+		System.out.println(onlytempname);
+		int boardUpDelCnt = 0;
+
+		String path = "C:/imagecollection/";
+		String temp_nameDel = onlytempname;
+		File fileDel = new File(path + temp_nameDel);
+
+		if (fileDel.exists() == true) {
+			fileDel.delete();
+		}
+
+		boardUpDelCnt = this.boardService.deleteFileBoardCnt(onlytempname);
+		System.out.println(boardUpDelCnt);
+
+		return boardUpDelCnt;
+
+	}
+
 	// /boardUpDelProc.do �젒�냽 �떆 �샇異쒕릺�뒗 硫붿냼�뱶 �꽑�뼵.
 	@RequestMapping(value = "/boardUpDelProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
 			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
@@ -327,6 +350,7 @@ public class BoardController {
 		// =============================================
 		int boardUpDelCnt = 0;
 		int UpdeleteFileBoardCnt = 0;
+		// int newEmpInsertCnt = 0;
 		int newEmpInsertCnt1 = 0;
 		System.out.println("boardUpDelProc �떆�옉");
 		try {
@@ -334,125 +358,55 @@ public class BoardController {
 			// 留뚯빟 �닔�젙紐⑤뱶�씠硫� �닔�젙 �떎�뻾�븯怨� �닔�젙 �쟻�슜�뻾�쓽 媛쒖닔瑜� ���옣.
 			// =============================================
 			if (upDel.equals("up")) {
-				boardUpDelCnt = this.boardService.updateBoard(boardDTO);
-				System.out.println(boardUpDelCnt);
-				if (boardUpDelCnt > 0) {
 
-					for (int i = 0; i < boardDTO.getOnlyTempName().length; i++) {
+				String profilePath = "C:/imagecollection/";
 
-						String path = "C:/imagecollection/";
-						String temp_nameDel = boardDTO.getOnlyTempName()[i];
-						File fileDel = new File(path + temp_nameDel);
-						if (fileDel.exists() == true) {
-							fileDel.delete();
-						}
+				File dir = new File(profilePath);
+				if (!dir.isDirectory()) {
+					dir.mkdir();
+				}
+
+				List<MultipartFile> mf = multi.getFiles("uploadBtn");
+
+				if (mf.size() == 1 && mf.get(0).getOriginalFilename().equals("")) {
+
+				} else {
+
+					for (int i = 0; i < mf.size(); i++) {
+
+						// �뙆�씪 以묐났紐� 泥섎━
+						String genId = UUID.randomUUID().toString();
+						// 蹂몃옒 �뙆�씪紐�
+						String originalfileName = mf.get(i).getOriginalFilename();
+						originalfileName = originalfileName.trim().toLowerCase().replaceAll(" ", "");
+						int position = originalfileName.lastIndexOf(".");
+						String saveFileName = genId + originalfileName.substring(position);
+						// File localFile = new File(profilePath + saveFileName);
+						String savePath = profilePath + saveFileName;
+						mf.get(i).transferTo(new File(savePath));
+						long fileSize = mf.get(i).getSize(); // �뙆�씪 �궗�씠利�
+						int b_no = boardDTO.getB_no();
+
+						HashMap<String, Object> hm = new HashMap<>();
+						hm.put("originalfileName", originalfileName);
+						hm.put("saveFileName", saveFileName);
+						hm.put("fileSize", fileSize);
+						hm.put("b_no", b_no);
+
+						newEmpInsertCnt1 = this.boardService.getNewEmpInsertCnt2(hm);
+						boardUpDelCnt = newEmpInsertCnt1;
 					}
-
-					// UpdeleteFileBoardCnt=this.boardService.updateFileBoard(boardDTO);
-					UpdeleteFileBoardCnt = this.boardService.deleteFileBoard(boardDTO);
-					System.out.println("UpdeleteFileBoardCnt?" + UpdeleteFileBoardCnt);
-
-					if (UpdeleteFileBoardCnt > 0) {
-
-						// String profilePath = "C:/stu_2020.02.12_KSJ/z_spring/WebContent/WEB-INF/resources/imagecollection/";
-						String profilePath = "C:/imagecollection/";
-						File dir = new File(profilePath);
-						if (!dir.isDirectory()) {
-							dir.mkdir();
-						}
-
-						List<MultipartFile> mf = multi.getFiles("uploadBtn");
-
-						/*
-						 * for (int i = 0; i < boardDTO.getOnlyFileName().length; i++) {
-						 * 
-						 * String temp_nameUp = boardDTO.getOnlyFileName[i]; mf.add(temp_nameUp); }
-						 */
-
-						System.out.println(mf);
-
-						if (mf.size() == 1 && mf.get(0).getOriginalFilename().equals("")) {
-
-						} else {
-
-							for (int i = 0; i < mf.size(); i++) {
-
-								// �뙆�씪 以묐났紐� 泥섎━
-								String genId = UUID.randomUUID().toString();
-								// 蹂몃옒 �뙆�씪紐�
-								String originalfileName = mf.get(i).getOriginalFilename();
-								originalfileName = originalfileName.trim().toLowerCase().replaceAll(" ", "");
-								int position = originalfileName.lastIndexOf(".");
-								String saveFileName = genId + originalfileName.substring(position);
-								// File localFile = new File(profilePath + saveFileName);
-								String savePath = profilePath + saveFileName;
-								mf.get(i).transferTo(new File(savePath));
-								long fileSize = mf.get(i).getSize(); // �뙆�씪 �궗�씠利�
-								int emp_no = boardDTO.getB_no();
-
-								HashMap<String, Object> hm = new HashMap<>();
-								hm.put("originalfileName", originalfileName);
-								hm.put("saveFileName", saveFileName);
-								hm.put("fileSize", fileSize);
-
-								newEmpInsertCnt1 = this.boardService.getNewEmpInsertCnt2(hm);
-
-							}
-
-						}
-					} else {
-
-						// String profilePath = "C:/stu_2020.02.12_KSJ/z_spring/WebContent/WEB-INF/resources/imagecollection/";
-						String profilePath = "C:/imagecollection/";
-
-						File dir = new File(profilePath);
-						if (!dir.isDirectory()) {
-							dir.mkdir();
-						}
-
-						List<MultipartFile> mf = multi.getFiles("uploadBtn");
-						System.out.println(mf);
-
-						if (mf.size() == 1 && mf.get(0).getOriginalFilename().equals("")) {
-
-						} else {
-
-							for (int i = 0; i < mf.size(); i++) {
-
-								// �뙆�씪 以묐났紐� 泥섎━
-								String genId = UUID.randomUUID().toString();
-								// 蹂몃옒 �뙆�씪紐�
-								String originalfileName = mf.get(i).getOriginalFilename();
-								originalfileName = originalfileName.trim().toLowerCase().replaceAll(" ", "");
-								int position = originalfileName.lastIndexOf(".");
-								String saveFileName = genId + originalfileName.substring(position);
-								// File localFile = new File(profilePath + saveFileName);
-								String savePath = profilePath + saveFileName;
-								mf.get(i).transferTo(new File(savePath));
-								long fileSize = mf.get(i).getSize(); // �뙆�씪 �궗�씠利�
-								int emp_no = boardDTO.getB_no();
-
-								HashMap<String, Object> hm = new HashMap<>();
-								hm.put("originalfileName", originalfileName);
-								hm.put("saveFileName", saveFileName);
-								hm.put("fileSize", fileSize);
-
-								newEmpInsertCnt1 = this.boardService.getNewEmpInsertCnt2(hm);
-
-							}
-
-						}
-
-					}
-
-					System.out.println(newEmpInsertCnt1);
 
 				}
+
+				System.out.println("newEmpInsertCnt1" + newEmpInsertCnt1);
+
+				// }
 				// =============================================
 				// 留뚯빟 �궘�젣紐⑤뱶�씠硫� �궘�젣 �떎�뻾�븯怨� �궘�젣 �쟻�슜�뻾�쓽 媛쒖닔瑜� ���옣.
 				// =============================================
 			} else {
-				System.out.println("<deleteBoard 而⑦듃濡ㅻ윭>");
+
 				// System.out.println(boardDTO.getGroup_count());
 
 				for (int i = 0; i < boardDTO.getOnlyTempName().length; i++) {

@@ -85,9 +85,10 @@
 			    </interceptors>  
 		    -->
  
-	<interceptors>    
+	<interceptors>     
         <interceptor> 
 			<mapping path="/**/*" />
+			<exclude-mapping path="/fileDelProc.do"/> 
 			<exclude-mapping path="/onlyFileUploadBoard.do"/> 
 			<exclude-mapping path="/onlyFileUpload.do"/> 
 			<exclude-mapping path="/goToExcelAllForm.do"/> 
