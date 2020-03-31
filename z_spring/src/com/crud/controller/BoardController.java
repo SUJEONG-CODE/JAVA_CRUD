@@ -33,8 +33,8 @@ import com.crud.service.BoardService;
 @Controller
 public class BoardController {
 
-	// �냽�꽦蹂��닔 boardService �꽑�뼵�븯怨� [BoardService �씤�꽣�럹�씠�뒪]瑜� 援ы쁽諛쏆� 媛앹껜瑜� �깮�꽦�빐 ���옣.
-	// 愿��슜�쟻�쑝濡� [BoardService �씤�꽣�럹�씠�뒪]瑜� 援ы쁽諛쏆� 媛앹껜紐낆� boardServiceImpl �씠�떎.
+	// 속성변수 boardService 선언하고 [BoardService 인터페이스]를 구현받은 객체를 생성해 저장.
+	// 관용적으로 [BoardService 인터페이스]를 구현받은 객체명은 boardServiceImpl 이다.
 	@Autowired
 	private BoardService boardService;
 
@@ -45,10 +45,10 @@ public class BoardController {
 
 		try {
 
-			// HttpSession 媛앹껜�뿉 uri �씪�뒗 �궎媛믪쑝濡� ���옣�맂 臾몄옄�뿴 爰쇰궡湲�.
+			// HttpSession 객체에 uri 라는 키값으로 저장된 문자열 꺼내기.
 			String uri = (String) session.getAttribute("uri");
-			// 留뚯빟 爰쇰궦 臾몄옄�뿴�씠 null�씠嫄곕굹 "boardListForm"�씠�씪硫� 留ㅺ컻蹂��닔濡� 諛쏆� BoardSearchDTO 媛앹껜瑜� HttpSession 媛앹껜�뿉
-			// boardSearchDTO �씪�뒗 �궎媛믪쑝濡� ���옣�븯湲�.
+			// 만약 꺼낸 문자열이 null이거나 "boardListForm"이라면 매개변수로 받은 BoardSearchDTO 객체를 HttpSession 객체에
+			// boardSearchDTO 라는 키값으로 저장하기.
 			if (uri == null || uri.equals("boardListForm.do")) {
 				session.setAttribute("boardSearchDTO", boardSearchDTO);
 			} else {
@@ -56,40 +56,40 @@ public class BoardController {
 			}
 			session.setAttribute("uri", "boardListForm.do");
 
-			// 寃뚯떆�뙋 珥� 媛쒖닔 �뼸湲�
+			// 게시판 총 개수 얻기
 			int boardListAllCnt = this.boardService.getBoardListAllCnt(boardSearchDTO);
 			int fileListBoardAllCnt = this.boardService.getFileListBoardAllCnt();
 
-			// [ �꽑�깮�맂 �럹�씠吏� 踰덊샇 ] 蹂댁젙�븯湲�.
-			// [ �꽑�깮�맂 �럹�씠吏� 踰덊샇 ]�� 珥� 媛쒖닔 媛꾩쓽 愿�怨꾧� �씠�긽�븷 寃쎌슦 議댁옱.
-			// ex) 寃��깋 珥� 媛쒖닔媛� 3媛� �씤�뜲 �꽑�깮�럹�씠吏�踰덊샇媛� 2�럹�씠吏� �씪寃쎌슦 (�떒 蹂댁뿬吏� �뻾�쓽 媛쒖닔媛� 10媛� �씪 �븣 ) 紐⑥닚�씠�떎.
-			// 2�럹�씠吏��씪硫� 11�뻾 遺��꽣 20�뻾 源뚯� 吏ㅻ씪�꽌 媛��졇�삤�� �씠�빞湲� �씤�뜲
-			// �쁽�옱 3�뻾諛뽰뿉 �뾾�뒗�뜲 �뼱�뼸寃� 媛��졇�삤�뒗吏� �쓽臾�
+			// [ 선택된 페이지 번호 ] 보정하기.
+			// [ 선택된 페이지 번호 ]와 총 개수 간의 관계가 이상할 경우 존재.
+			// ex) 검색 총 개수가 3개 인데 선택페이지번호가 2페이지 일경우 (단 보여질 행의 개수가 10개 일 때 ) 모순이다.
+			// 2페이지라면 11행 부터 20행 까지 짤라서 가져오란 이야기 인데
+			// 현재 3행밖에 없는데 어떻게 가져오는지 의문
 			if (boardListAllCnt > 0) {
-				// �꽑�깮�븳 �럹�씠吏� 踰덊샇 援ы븯湲�
+				// 선택한 페이지 번호 구하기
 				int selectPageNo = boardSearchDTO.getSelectPageNo();
-				// �븳 �솕硫댁뿉 蹂댁뿬吏��뒗 �뻾�쓽 媛쒖닔 援ы븯湲�
+				// 한 화면에 보여지는 행의 개수 구하기
 				int rowCntPerPage = boardSearchDTO.getRowCntPerPage();
-				// 寃��깋�븷 �떆�옉�뻾 踰덊샇 援ы븯湲�
+				// 검색할 시작행 번호 구하기
 				int beginRowNo = selectPageNo * rowCntPerPage - rowCntPerPage + 1;
-				// 寃��깋�븳 珥� 媛��닔蹂대떎 寃��깋�븷 �떆�옉�뻾�쓽 踰덊샇媛� �겕硫�
+				// 검색한 총 갯수보다 검색할 시작행의 번호가 크면
 				if (beginRowNo > boardListAllCnt) {
-					// �꽑�깮�븳 �럹�씠吏� 踰덊샇瑜� '1'濡� 珥덇린�솕 �빐以�.
+					// 선택한 페이지 번호를 '1'로 초기화 해줌.
 					boardSearchDTO.setSelectPageNo(1);
 				}
 			}
 
 			// System.out.println("boardListAllCnt : " + boardListAllCnt);
 
-			// 寃뚯떆�뙋 紐⑸줉 �뼸湲�
+			// 게시판 목록 얻기
 
 			List<Map<String, String>> boardList = this.boardService.getBoardList(boardSearchDTO);
 			// System.out.println("boardList.size() : " + boardList.size() );
 
-			// ModelAndView 媛앹껜�뿉 寃��깋 媛쒖닔, 寃뚯떆�뙋 寃��깋 紐⑸줉 ���옣�븯湲�
-			// ModelAndView 媛앹껜�뿉 ���옣�맂 DB �뿰�룞 寃곌낵臾쇱� JSP �럹�씠吏��뿉�꽌 EL 臾몃쾿�쑝濡� �븘�옒 泥섎읆 爰쇰궪 �닔 �엳�떎.
-			// ModelAndView 媛앹껜�뿉 ���옣�맂 �뜲�씠�꽣 爰쇰궪 �븣 �넂 ${���옣 �궎媛� 紐�}
-			// addObject("�궎 媛믩챸",蹂��닔紐�);
+			// ModelAndView 객체에 검색 개수, 게시판 검색 목록 저장하기
+			// ModelAndView 객체에 저장된 DB 연동 결과물은 JSP 페이지에서 EL 문법으로 아래 처럼 꺼낼 수 있다.
+			// ModelAndView 객체에 저장된 데이터 꺼낼 때 → ${저장 키값 명}
+			// addObject("키 값명",변수명);
 			mav.addObject("boardList", boardList);
 			mav.addObject("boardListAllCnt", boardListAllCnt);
 			mav.addObject("fileListBoardAllCnt", fileListBoardAllCnt);
@@ -98,20 +98,20 @@ public class BoardController {
 			System.out.println(boardListAllCnt);
 
 		} catch (Exception e) {
-			// try 援щЦ�뿉�꽌 �삁�쇅媛� 諛쒖깮�븯硫� �떎�뻾�븷 援щЦ �꽕�젙
+			// try 구문에서 예외가 발생하면 실행할 구문 설정
 			System.out.println(e.getMessage());
 
-			System.out.println("<�뿉�윭諛쒖깮>");
+			System.out.println("<에러발생>");
 		}
-		// [ModelAndView 媛앹껜] 由ы꽩�븯湲�
+		// [ModelAndView 객체] 리턴하기
 		return mav;
 	}
 
-	// �깉湲� �벐湲�
+	// 새글 쓰기
 	@RequestMapping(value = "/boardRegForm.do")
 	public ModelAndView goBoardRegForm() {
-		// [ModelAndView 媛앹껜] �깮�꽦�븯湲�.
-		// [ModelAndView 媛앹껜] �뿉 [�샇異� JSP �럹�씠吏�紐�]�쓣 ���옣�븯湲�.
+		// [ModelAndView 객체] 생성하기.
+		// [ModelAndView 객체] 에 [호출 JSP 페이지명]을 저장하기.
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardRegForm.jsp");
 		return mav;
@@ -158,9 +158,9 @@ public class BoardController {
 
 			for (int i = 0; i < mf.size(); i++) {
 				System.out.println("시작");
-				// �뙆�씪 以묐났紐� 泥섎━
+				// 파일 중복명 처리
 				String genId = UUID.randomUUID().toString();
-				// 蹂몃옒 �뙆�씪紐�
+				// 본래 파일명
 				String originalfileName = mf.get(i).getOriginalFilename();
 				originalfileName = originalfileName.trim().toLowerCase().replaceAll(" ", "");
 				int position = originalfileName.lastIndexOf(".");
@@ -188,47 +188,46 @@ public class BoardController {
 	}
 
 	/*
-	 * @RequestMapping( value="/boardRegProc.do" //�젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙 , method=RequestMethod.POST //�젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛�
-	 * �쟾�넚 諛⑸쾿 , produces="application/json;carset=UTF-8" //�쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙 )
+	 * @RequestMapping( value="/boardRegProc.do" //접속하는 클라이언트의 URL 주소 설정 , method=RequestMethod.POST //접속하는 클라이언트의 파라미터값 전송 방법 ,
+	 * produces="application/json;carset=UTF-8" //응답할 데이터 종류 : json 으로 설정 )
 	 * 
-	 * @ResponseBody public int insertBoard( //============================================= // �뙆�씪誘명꽣媛믪쓣 ���옣�븷 BoardDTO 媛앹껜 瑜� 留ㅺ컻蹂��닔濡� �꽑�뼵
+	 * @ResponseBody public int insertBoard( //============================================= // 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 	 * //============================================= BoardDTO BoardDTO) { int boardRegCnt = 0; System.out.println(BoardDTO.getB_no()); try { //[
-	 * BoardServiceImpl 媛앹껜 ]�쓽 insertBoard 硫붿냼�뱶 �샇異쒕줈 寃뚯떆�뙋 �엯�젰�븯怨� [寃뚯떆�뙋 �엯�젰] �쟻�슜�뻾�쓽 媛쒖닔 �뼸湲�. //System.out.println(BoardDTO.getContent());
+	 * BoardServiceImpl 객체 ]의 insertBoard 메소드 호출로 게시판 입력하고 [게시판 입력] 적용행의 개수 얻기. //System.out.println(BoardDTO.getContent());
 	 * //System.out.println(BoardDTO.getPwd()); //System.out.println(BoardDTO.getReadcount());
 	 * 
 	 * //System.out.println(BoardDTO.getSubject()); boardRegCnt = this.boardService.insertBoard(BoardDTO);
 	 * 
-	 * System.out.println("boardRegCnt�뒗 "+boardRegCnt);
+	 * System.out.println("boardRegCnt는 "+boardRegCnt);
 	 * 
 	 * }catch(Exception e) { System.out.println(e.getMessage());
 	 * 
-	 * System.out.println("<�뿉�윭諛쒖깮>"); boardRegCnt = -1; } return boardRegCnt; }
+	 * System.out.println("<에러발생>"); boardRegCnt = -1; } return boardRegCnt; }
 	 */
 
 	// method=RequestMethod.GET , method=RequestMethod.POST
-	// �쐞�쓽 肄붾뵫�쓣 �옉�꽦�븯硫� 臾댁“嫄� �븳媛�吏� 諛⑹떇�쓽 �쟾�넚 諛⑹떇�쓣 �꽕�젙�븯�뒗 肄붾뵫�씠�씪�꽌 �옉�꽦�븳 諛⑸쾿�쑝濡쒕컰�뿉 �넻�떊�씠 遺덇��뒫�븯�떎.
+	// 위의 코딩을 작성하면 무조건 한가지 방식의 전송 방식을 설정하는 코딩이라서 작성한 방법으로밖에 통신이 불가능하다.
 	@RequestMapping(value = "/boardContentForm.do")
 	public ModelAndView goBoardContentForm(
-			// b_no �씪�뒗 �뙆�씪誘명꽣紐낆뿉 �빐�떦�븯�뒗 �뙆�씪誘명꽣媛믪씠 ���옣�릺�뒗 留ㅺ컻蹂��닔 b_no �꽑�뼵
-			// 愿��슜�쟻�쑝濡� �뙆�씪誘명꽣紐낃낵 �뙆�씪誘명꽣媛믪� �뒪�렆留곸� �룞�씪�븯寃� 以��떎.
-			// 寃뚯떆�뙋 PK 踰덊샇媛� 留ㅺ컻蹂��닔濡� �뱾�뼱�삤誘�濡� 留ㅺ컻蹂��닔 �옄猷뚰삎�� int 濡� �븳�떎.
-			// String�쑝濡� 諛쏆븘�룄 臾몄젣 �뾾�떎.
+			// b_no 라는 파라미터명에 해당하는 파라미터값이 저장되는 매개변수 b_no 선언
+			// 관용적으로 파라미터명과 파라미터값은 스펠링은 동일하게 준다.
+			// 게시판 PK 번호가 매개변수로 들어오므로 매개변수 자료형은 int 로 한다.
+			// String으로 받아도 문제 없다.
 			@RequestParam(value = "b_no") int b_no
 			/* ,@RequestParam( value="admin_id[]" ) String[] admin_id */
 			, @RequestParam(value = "file_cnt") int file_cnt, @RequestParam(value = "listNum") int listNum,
 			@RequestParam(value = "group_no") int group_no, HttpSession session) {
-		// ModelAndView 媛앹껜 �깮�꽦�븯湲�
-		// ModelAndView 媛앹껜 �뿉 �샇異� JSP �럹�씠吏�紐� ���옣�븯湲�.
+		// ModelAndView 객체 생성하기
+		// ModelAndView 객체 에 호출 JSP 페이지명 저장하기.
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardContentForm.jsp");
 
 		try {
 
-			// ???????????
 			session.setAttribute("uri", "boardContentForm.do");
 			// ----------------------------------------------------------
-			// [ BoardServiceImpl 媛앹껜 ]�쓽 getBoardDTO 硫붿냼�뱶 �샇異쒕줈
-			// 1媛쒖쓽 寃뚯떆�뙋 湲��쓣 BoardDTO 媛앹껜�뿉 �떞�븘�삤湲�
+			// [ BoardServiceImpl 객체 ]의 getBoardDTO 메소드 호출로
+			// 1개의 게시판 글을 BoardDTO 객체에 담아오기
 			// ----------------------------------------------------------
 
 			Map<String, Integer> mapContent = new HashMap<String, Integer>();
@@ -237,8 +236,7 @@ public class BoardController {
 
 			BoardDTO boardDTO = this.boardService.getBoardDTO(mapContent);
 
-			// �뙎湲� 由ъ뒪�듃�� 珥앷컻�닔 �뼸�뼱�삤湲�-----------------------
-			// System.out.println("commentDTO 而⑦듃濡ㅻ윭 �떆�옉");
+			// 댓글 리스트와 총개수 얻어오기-----------------------
 
 			List<Map<String, String>> commentDTO = this.boardService.getCommentDTO(b_no);
 			int commentListAllCnt = this.boardService.getCommentListAllCnt(b_no);
@@ -246,12 +244,8 @@ public class BoardController {
 			List<Object> onlyFileName = this.boardService.getOnlyFileName(b_no);
 			List<Object> onlyTempName = this.boardService.getOnlytemp_name(b_no);
 
-			// ---------------------------------------------------------------
-
-			// System.out.println("boardDTO = "+boardDTO + "�뿰�룞�릺�뿀�뒿�땲�떎." );
-
 			// ----------------------------------------------------------
-			// [ ModelAndView 媛앹껜 ]�뿉 1媛쒖쓽 寃뚯떆�뙋 湲��쓣 �떞怨� �엳�뒗 BoardDTO 媛앹껜 ���옣�븯湲�.
+			// [ ModelAndView 객체 ]에 1개의 게시판 글을 담고 있는 BoardDTO 객체 저장하기.
 			// ----------------------------------------------------------
 			mav.addObject("boardDTO", boardDTO);
 			mav.addObject("commentDTO", commentDTO);
@@ -270,13 +264,12 @@ public class BoardController {
 	}
 
 	// ************************************************************************
-	// /boardUpDelForm.do �젒�냽 �떆 �샇異쒕릺�뒗 硫붿냼�뱶 �꽑�뼵.
+	// /boardUpDelForm.do 접속 시 호출되는 메소드 선언.
 	// ************************************************************************
 	@RequestMapping(value = "/boardUpDelForm.do", method = RequestMethod.POST)
-	// "b_no" �씪�뒗 �뙆�씪誘명꽣紐낆쓽 �뙆�씪誘명꽣媛믪씠 ���옣�릺�뒗 留ㅺ컻蹂��닔 b_no �꽑�뼵
+	// "b_no" 라는 파라미터명의 파라미터값이 저장되는 매개변수 b_no 선언
 	public ModelAndView goBoardUpDelForm(@RequestParam(value = "b_no") int b_no, HttpSession session) {
-
-		// try~catch 援щЦ�븞�뿉 �옉�꽦�븯硫� 吏��뿭蹂��닔 �삎�깭濡� �꽑�뼵�릺湲� �븣臾몄뿉 釉붾윮�븞�뿉�꽌留� �궗�슜 媛��뒫�븯�떎.. �뵲�씪�꽌 諛뽰뿉 �옉�꽦.
+		// try~catch 구문안에 작성하면 지역변수 형태로 선언되기 때문에 블럭안에서만 사용 가능하다.. 따라서 밖에 작성.
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("boardUpDelForm.jsp");
 		try {
@@ -284,9 +277,9 @@ public class BoardController {
 			session.setAttribute("uri", "boardUpDelForm.do");
 
 			// ***********************************
-			// [�닔�젙/�궘�젣�븷 1媛쒖쓽 寃뚯떆�뙋 湲� �젙蹂�] �뼸湲�.
+			// [수정/삭제할 1개의 게시판 글 정보] 얻기.
 			// ***********************************
-			// [BoardServiceImpl 媛앹껜]�쓽 getBoardDTO_without_upReadcount 硫붿냼�뱶瑜� �샇異쒗븯�뿬 �뼸�뒗�떎.
+			// [BoardServiceImpl 객체]의 getBoardDTO_without_upReadcount 메소드를 호출하여 얻는다.
 			BoardDTO boardDTO = this.boardService.getBoardDTO_without_upReadcount(b_no);
 
 			List<Object> onlyFileName = this.boardService.getOnlyFileName(b_no);
@@ -299,11 +292,9 @@ public class BoardController {
 
 			System.out.println(onlyFileName.get(0));
 
-			// System.out.println("<�젒�냽�꽦怨�> [�젒�냽 URL]->/boardUpDelForm.do [쒕찓�냼�뱶] -> BoardController.goBoardUpDelForm(~) \n\n\n");
-
 		} catch (Exception e) {
-			// �삁�쇅 諛쒖깮 �떆 �떎�뻾�븷 肄붾뱶 �꽕�젙.
-			System.out.println("<�젒�냽�떎�뙣> [�젒�냽 URL]->/boardUpDelForm.do [�샇異쒕찓�냼�뱶] -> BoardController.goBoardUpDelForm(~) \n\n\n");
+			// 예외 발생 시 실행할 코드 설정.
+			System.out.println("<접속실패> [접속 URL]->/boardUpDelForm.do [호출메소드] -> BoardController.goBoardUpDelForm(~) \n\n\n");
 		}
 		return mav;
 	}
@@ -315,7 +306,6 @@ public class BoardController {
 	@ResponseBody
 	public int fileDelProc(@RequestParam(value = "onlyTempName") String onlytempname) {
 
-		System.out.println(onlytempname);
 		int boardUpDelCnt = 0;
 
 		String path = "C:/imagecollection/";
@@ -327,35 +317,31 @@ public class BoardController {
 		}
 
 		boardUpDelCnt = this.boardService.deleteFileBoardCnt(onlytempname);
-		System.out.println(boardUpDelCnt);
 
 		return boardUpDelCnt;
 
 	}
 
-	// /boardUpDelProc.do �젒�냽 �떆 �샇異쒕릺�뒗 硫붿냼�뱶 �꽑�뼵.
-	@RequestMapping(value = "/boardUpDelProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
-			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
-			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
-	)
+	// /boardUpDelProc.do 접속 시 호출되는 메소드 선언.
+	@RequestMapping(value = "/boardUpDelProc.do", method = RequestMethod.POST, produces = "application/json;carset=UTF-8")
 	@ResponseBody
 	public int boardUpDelProc(
 			// =============================================
-			// �뙆�씪誘명꽣媛믪쓣 ���옣�븷 BoardDTO 媛앹껜 瑜� 留ㅺ컻蹂��닔濡� �꽑�뼵
+			// 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 			// =============================================
 			@RequestParam(value = "upDel") String upDel, BoardDTO boardDTO, MultipartHttpServletRequest multi,
 			@RequestParam("uploadBtn") MultipartFile[] file) {
 		// =============================================
-		// �닔�젙 �삉�뒗 �궘�젣 �쟻�슜�뻾�쓽 媛쒖닔媛� ���옣�릺�뒗 蹂��닔 �꽑�뼵.
+		// 수정 또는 삭제 적용행의 개수가 저장되는 변수 선언.
 		// =============================================
 		int boardUpDelCnt = 0;
 		int UpdeleteFileBoardCnt = 0;
 		// int newEmpInsertCnt = 0;
 		int newEmpInsertCnt1 = 0;
-		System.out.println("boardUpDelProc �떆�옉");
+		// System.out.println("boardUpDelProc �떆�옉");
 		try {
 			// =============================================
-			// 留뚯빟 �닔�젙紐⑤뱶�씠硫� �닔�젙 �떎�뻾�븯怨� �닔�젙 �쟻�슜�뻾�쓽 媛쒖닔瑜� ���옣.
+			// 만약 수정모드이면 수정 실행하고 수정 적용행의 개수를 저장.
 			// =============================================
 			if (upDel.equals("up")) {
 
@@ -374,9 +360,9 @@ public class BoardController {
 
 					for (int i = 0; i < mf.size(); i++) {
 
-						// �뙆�씪 以묐났紐� 泥섎━
+						// 파일 중복명 처리
 						String genId = UUID.randomUUID().toString();
-						// 蹂몃옒 �뙆�씪紐�
+						// 본래 파일명
 						String originalfileName = mf.get(i).getOriginalFilename();
 						originalfileName = originalfileName.trim().toLowerCase().replaceAll(" ", "");
 						int position = originalfileName.lastIndexOf(".");
@@ -384,7 +370,7 @@ public class BoardController {
 						// File localFile = new File(profilePath + saveFileName);
 						String savePath = profilePath + saveFileName;
 						mf.get(i).transferTo(new File(savePath));
-						long fileSize = mf.get(i).getSize(); // �뙆�씪 �궗�씠利�
+						long fileSize = mf.get(i).getSize(); // 파일 사이즈
 						int b_no = boardDTO.getB_no();
 
 						HashMap<String, Object> hm = new HashMap<>();
@@ -399,11 +385,8 @@ public class BoardController {
 
 				}
 
-				System.out.println("newEmpInsertCnt1" + newEmpInsertCnt1);
-
-				// }
 				// =============================================
-				// 留뚯빟 �궘�젣紐⑤뱶�씠硫� �궘�젣 �떎�뻾�븯怨� �궘�젣 �쟻�슜�뻾�쓽 媛쒖닔瑜� ���옣.
+				// 만약 삭제모드이면 삭제 실행하고 삭제 적용행의 개수를 저장.
 				// =============================================
 			} else {
 
@@ -433,34 +416,29 @@ public class BoardController {
 			boardUpDelCnt = -1;
 
 		}
-		// �닔�젙 �삉�뒗 �궘�젣 �쟻�슜�뻾�쓽 媛쒖닔 由ы꽩
+		// 수정 또는 삭제 적용행의 개수 리턴
 		return boardUpDelCnt;
 	}
 
 	// --------------------------------------------------------
-	// �뙆�씪�뾽濡쒕뱶
+	// 파일업로드
 	// ---------------------------------------------------------
-
 	@RequestMapping(value = "/fileForm.do")
 	public ModelAndView goFileForm() {
-		// [ModelAndView 媛앹껜] �깮�꽦�븯湲�.
-		// [ModelAndView 媛앹껜] �뿉 [�샇異� JSP �럹�씠吏�紐�]�쓣 ���옣�븯湲�.
+
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("fileForm.jsp");
 		return mav;
 	}
 
 	// --------------------------------------------------------
-	// �뙎湲��벑濡�
+	// 댓글등록
 	// ---------------------------------------------------------
-	@RequestMapping(value = "/comentRegProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
-			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
-			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
-	)
+	@RequestMapping(value = "/comentRegProc.do", method = RequestMethod.POST, produces = "application/json;carset=UTF-8")
 	@ResponseBody
 	public int insertComment(
 			// =============================================
-			// �뙆�씪誘명꽣媛믪쓣 ���옣�븷 BoardDTO 媛앹껜 瑜� 留ㅺ컻蹂��닔濡� �꽑�뼵
+			// 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 			// =============================================
 			@RequestParam(value = "writer") String writer, @RequestParam(value = "comment_detail") String comment_detail,
 			@RequestParam(value = "b_no") String b_no, @RequestParam(value = "comment_password") String comment_password
@@ -475,7 +453,6 @@ public class BoardController {
 			mapComment.put("comment_detail", comment_detail);
 			mapComment.put("b_no", b_no);
 			mapComment.put("comment_password", comment_password);
-			// [ BoardServiceImpl 媛앹껜 ]�쓽 insertBoard 硫붿냼�뱶 �샇異쒕줈 寃뚯떆�뙋 �엯�젰�븯怨� [寃뚯떆�뙋 �엯�젰] �쟻�슜�뻾�쓽 媛쒖닔 �뼸湲�.
 
 			commentRegCnt = this.boardService.insertComment(mapComment);
 			System.out.println(commentRegCnt);
@@ -491,16 +468,13 @@ public class BoardController {
 	}
 
 	// --------------------------------------------------------
-	// �뙎湲��궘�젣
+	// 댓글삭제
 	// ---------------------------------------------------------
-	@RequestMapping(value = "/comentDelProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
-			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
-			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
-	)
+	@RequestMapping(value = "/comentDelProc.do", method = RequestMethod.POST, produces = "application/json;carset=UTF-8")
 	@ResponseBody
 	public int deleteComment(
 			// =============================================
-			// �뙆�씪誘명꽣媛믪쓣 ���옣�븷 BoardDTO 媛앹껜 瑜� 留ㅺ컻蹂��닔濡� �꽑�뼵
+			// 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 			// =============================================
 			/*
 			 * @RequestParam(value="b_no_comment") String b_no_comment ,@RequestParam(value="c_code") String c_code ,@RequestParam(value="b_code")
@@ -524,8 +498,6 @@ public class BoardController {
 			delComment.put("print_no", print_no);
 			delComment.put("print_level", print_level);
 
-			// [ BoardServiceImpl 媛앹껜 ]�쓽 insertBoard 硫붿냼�뱶 �샇異쒕줈 寃뚯떆�뙋 �엯�젰�븯怨� [寃뚯떆�뙋 �엯�젰] �쟻�슜�뻾�쓽 媛쒖닔 �뼸湲�.
-
 			// System.out.println("comment_count�뒗?"+comment_count);
 			// System.out.println("comment_count�뒗?"+comment_count);
 			// System.out.println("comment_count�뒗--?"+delComment.get("comment_count"));
@@ -542,16 +514,13 @@ public class BoardController {
 	}
 
 	// ----------------------------------------------------------------------
-	// 湲� �닔�젙�떆 鍮꾨�踰덊샇 �솗�씤�븯�뒗 李� �쁽�옱�뒗 �궗�슜 �븞�븿
+	// 글 수정시 비밀번호 확인하는 창 현재는 사용 안함
 
-	@RequestMapping(value = "/checkPwProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
-			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
-			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
-	)
+	@RequestMapping(value = "/checkPwProc.do", method = RequestMethod.POST, produces = "application/json;carset=UTF-8")
 	@ResponseBody
 	public int insertPwd(
 			// =============================================
-			// �뙆�씪誘명꽣媛믪쓣 ���옣�븷 BoardDTO 媛앹껜 瑜� 留ㅺ컻蹂��닔濡� �꽑�뼵
+			// 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 			// =============================================
 			@RequestParam(value = "writer") String writer, @RequestParam(value = "pwd") String pwd) {
 		int checkPwdCnt = 0;
@@ -577,12 +546,9 @@ public class BoardController {
 		return checkPwdCnt;
 	}
 
-	// �뙎湲� 鍮꾨쾲 �솗�씤�썑 �궘�젣
+	// 댓글 비번 확인후 삭제
 
-	@RequestMapping(value = "/checkPwdComentProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
-			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
-			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
-	)
+	@RequestMapping(value = "/checkPwdComentProc.do", method = RequestMethod.POST, produces = "application/json;carset=UTF-8")
 	@ResponseBody
 	public int checkPwdComentDelete(@RequestParam(value = "comment_password") int comment_password) {
 		int checkPwComentCnt = 0;
@@ -602,7 +568,7 @@ public class BoardController {
 		return checkPwComentCnt;
 	}
 	/*
-	 * //�떒�씪 �뙆�씪 �뾽濡쒕뱶
+	 * //단일 파일 업로드
 	 * 
 	 * @RequestMapping(value = "/newEmpInfoProc.do", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	 * 
@@ -627,9 +593,8 @@ public class BoardController {
 	 */
 
 	// -----------------------------------------------------------------------------------
-	// �떎以� �뙆�씪 �뾽濡쒕뱶
+	// 다중 파일 업로드
 	// ------------------------------------------------------------------------------------
-
 	@RequestMapping(value = "/onlyFileUpload.do", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public int onlyFileUpload(OnlyFileListDTO onlyFileListDTO, FileUpDTO fileUpDTO, MultipartHttpServletRequest multi,
@@ -654,7 +619,7 @@ public class BoardController {
 
 			for (int i = 0; i < mf.size(); i++) {
 
-				// �뙆�씪 以묐났紐� 泥섎━
+				// 파일 중복명 처리
 				String genId = UUID.randomUUID().toString();
 				// 蹂몃옒 �뙆�씪紐�
 				String originalfileName = mf.get(i).getOriginalFilename();
@@ -702,10 +667,10 @@ public class BoardController {
 		return "forward:/onlyFileUpload.do";
 
 	}
-	// --------------------------------------------------------
-	// �뙆�씪由ъ뒪�듃
-	// ---------------------------------------------------------
 
+	// --------------------------------------------------------
+	// 파일리스트
+	// ---------------------------------------------------------
 	@RequestMapping(value = "/fileListForm.do")
 	public ModelAndView getBoardList(FileUpDTO fileUpDTO) {
 		ModelAndView mav = new ModelAndView();
@@ -714,10 +679,6 @@ public class BoardController {
 		try {
 
 			int fileListAllCnt = this.boardService.getFileListAllCnt();
-
-			// System.out.println("boardListAllCnt : " + boardListAllCnt);
-
-			// 寃뚯떆�뙋 紐⑸줉 �뼸湲�
 
 			List<Map<String, String>> fileList = this.boardService.getFileList(fileUpDTO);
 			// System.out.println("boardList.size() : " + boardList.size() );
@@ -728,20 +689,19 @@ public class BoardController {
 			// System.out.println("fileList.size() : " + fileList.size() );
 
 		} catch (Exception e) {
-			// try 援щЦ�뿉�꽌 �삁�쇅媛� 諛쒖깮�븯硫� �떎�뻾�븷 援щЦ �꽕�젙
+
 			System.out.println(e.getMessage());
 
 			System.out.println("<�뿉�윭諛쒖깮>");
 		}
-		// [ModelAndView 媛앹껜] 由ы꽩�븯湲�
+
 		return mav;
 	}
 
 	@RequestMapping(value = "/fileContentForm.do")
 	public ModelAndView goFileContentForm(@RequestParam(value = "emp_no") int emp_no, @RequestParam(value = "count_no") int count_no,
 			@RequestParam(value = "file_cnt") int file_cnt, HttpSession session) {
-		// ModelAndView 媛앹껜 �깮�꽦�븯湲�
-		// ModelAndView 媛앹껜 �뿉 �샇異� JSP �럹�씠吏�紐� ���옣�븯湲�.
+
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("fileContentForm.jsp");
 		try {
@@ -766,7 +726,7 @@ public class BoardController {
 		return mav;
 	}
 
-	// �뿊�� ���옣 �쁽�옱�럹�씠吏�
+	// 엑셀 저장 현재페이지
 	@RequestMapping(value = "/excelForm.do")
 	public ModelAndView goToExcelForm(BoardSearchDTO boardSearchDTO) {
 		ModelAndView mav = new ModelAndView();
@@ -783,30 +743,30 @@ public class BoardController {
 			mav.addObject("boardListAllCnt", boardListAllCnt);
 
 		} catch (Exception e) {
-			// try 援щЦ�뿉�꽌 �삁�쇅媛� 諛쒖깮�븯硫� �떎�뻾�븷 援щЦ �꽕�젙
+
 			System.out.println(e.getMessage());
 
 			System.out.println("<�뿉�윭諛쒖깮>");
 		}
-		// [ModelAndView 媛앹껜] 由ы꽩�븯湲�
+
 		return mav;
 	}
 
 	/*
 	 * 
-	 * //�깉湲� �벐湲�
+	 * //새글 쓰기
 	 * 
 	 * @RequestMapping( value="/filedown.do" ) public ModelAndView goFiledown(
 	 * 
-	 * @RequestParam( value="emp_pic" ) String emp_pic ,HttpServletResponse response ) { // [ModelAndView 媛앹껜] �깮�꽦�븯湲�. // [ModelAndView 媛앹껜] �뿉
-	 * [�샇異� JSP �럹�씠吏�紐�]�쓣 ���옣�븯湲�. ModelAndView mav = new ModelAndView(); mav.setViewName("filedown.jsp");
+	 * @RequestParam( value="emp_pic" ) String emp_pic ,HttpServletResponse response ) { // [ModelAndView 객체] 생성하기. // [ModelAndView 객체] 에 [호출 JSP
+	 * 페이지명]을 저장하기. ModelAndView mav = new ModelAndView(); mav.setViewName("filedown.jsp");
 	 * 
 	 * try { mav.addObject("emp_pic",emp_pic);
 	 * 
 	 * 
 	 * }catch(Exception e) { System.out.println(e.getMessage());
 	 * 
-	 * System.out.println("<�뿉�윭諛쒖깮>");
+	 * System.out.println("<에러발생>");
 	 * 
 	 * } return mav; }
 	 */
@@ -814,9 +774,8 @@ public class BoardController {
 	@RequestMapping(value = "/filedown.do")
 	public void fileDownload(HttpServletResponse response, HttpServletRequest request, @RequestParam Map<String, String> paramMap) {
 
-		String path = paramMap.get("filePath"); // full寃쎈줈
-		String fileName = paramMap.get("fileName"); // �뙆�씪紐�
-
+		String path = paramMap.get("filePath"); // 경로
+		String fileName = paramMap.get("fileName"); // 파일명
 		File file = new File(path);
 
 		FileInputStream fileInputStream = null;
@@ -825,7 +784,7 @@ public class BoardController {
 		try {
 			String downName = null;
 			String browser = request.getHeader("User-Agent");
-			// �뙆�씪 �씤肄붾뵫
+			// 파일 인코딩
 			if (browser.contains("MSIE") || browser.contains("Trident") || browser.contains("Chrome")) {// 釉뚮씪�슦�� �솗�씤 �뙆�씪紐� encode
 
 				downName = URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", "%20");
@@ -852,7 +811,7 @@ public class BoardController {
 
 			}
 
-			servletOutputStream.flush();// 異쒕젰
+			servletOutputStream.flush();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -875,12 +834,9 @@ public class BoardController {
 	}
 
 	// --------------------------------------------------------
-	// �뙆�씪�궘�젣
+	// 파일삭제 이름만 삭제/폴더에선 삭제 안함
 	// ---------------------------------------------------------
-	@RequestMapping(value = "/filetDelProc.do" // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 URL 二쇱냼 �꽕�젙
-			, method = RequestMethod.POST // �젒�냽�븯�뒗 �겢�씪�씠�뼵�듃�쓽 �뙆�씪誘명꽣媛� �쟾�넚 諛⑸쾿
-			, produces = "application/json;carset=UTF-8" // �쓳�떟�븷 �뜲�씠�꽣 醫낅쪟 : json �쑝濡� �꽕�젙
-	)
+	@RequestMapping(value = "/filetDelProc.do", method = RequestMethod.POST, produces = "application/json;carset=UTF-8")
 	@ResponseBody
 	public int deleteFile(@RequestParam(value = "emp_password") String emp_password, @RequestParam(value = "emp_no") String emp_no) {
 		int deleteFileCnt = 0;
@@ -903,7 +859,7 @@ public class BoardController {
 		return deleteFileCnt;
 	}
 
-	// �뿊�� ���옣 �쟾泥� �럹�씠吏�
+	// 엑셀 저장 전체 페이지
 	@RequestMapping(value = "/goToExcelAllForm.do")
 	public ModelAndView goToExcelAllForm(BoardSearchDTO boardSearchDTO) {
 		ModelAndView mav = new ModelAndView();
@@ -920,12 +876,12 @@ public class BoardController {
 			mav.addObject("boardListAllCnt", boardListAllCnt);
 
 		} catch (Exception e) {
-			// try 援щЦ�뿉�꽌 �삁�쇅媛� 諛쒖깮�븯硫� �떎�뻾�븷 援щЦ �꽕�젙
+
 			System.out.println(e.getMessage());
 
 			System.out.println("<�뿉�윭諛쒖깮>");
 		}
-		// [ModelAndView 媛앹껜] 由ы꽩�븯湲�
+
 		return mav;
 	}
 
