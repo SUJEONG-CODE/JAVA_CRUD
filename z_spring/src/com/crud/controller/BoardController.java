@@ -289,7 +289,7 @@ public class BoardController {
 
 			mav.addObject("onlyFileName", onlyFileName);
 			mav.addObject("onlyTempName", onlyTempName);
-
+			mav.addObject("profilePath", profilePath);
 			mav.addObject("boardDTO", boardDTO);
 
 			System.out.println(onlyFileName.get(0));
@@ -332,7 +332,8 @@ public class BoardController {
 			// 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 			// =============================================
 			@RequestParam(value = "upDel") String upDel, BoardDTO boardDTO, MultipartHttpServletRequest multi,
-			@RequestParam("uploadBtn") MultipartFile[] file) {
+			@RequestParam(value = "uploadBtn") MultipartFile[] file, @RequestParam(value = "onlyFileName") MultipartFile[] onlyFileName,
+			@RequestParam(value = "onlyTempName") MultipartFile[] onlyTempName) {
 		// =============================================
 		// 수정 또는 삭제 적용행의 개수가 저장되는 변수 선언.
 		// =============================================
@@ -350,6 +351,12 @@ public class BoardController {
 				String profilePath = "C:/imagecollection/";
 
 				File dir = new File(profilePath);
+
+				List<MultipartFile> onlyFileName1 = multi.getFiles("onlyFileName");
+				System.out.println(onlyFileName1);
+				List<MultipartFile> onlyTempName1 = multi.getFiles("onlyTempName");
+				System.out.println(onlyTempName1);
+
 				if (!dir.isDirectory()) {
 					dir.mkdir();
 				}
@@ -414,7 +421,7 @@ public class BoardController {
 			}
 
 		} catch (Exception e) {
-			System.out.println("<�뿉�윭諛쒖깮>");
+
 			System.out.println(e.getMessage());
 			boardUpDelCnt = -1;
 

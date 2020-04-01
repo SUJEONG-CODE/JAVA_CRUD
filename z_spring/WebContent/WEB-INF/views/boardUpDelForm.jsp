@@ -695,12 +695,6 @@
 											list1.push("${onlyFileName}");
 				
 											</c:forEach>
-				
-											for ( var i = 0; i < list1.length; i++) {
-				
-												$("[name=file_name]").append("<div style='display: flex;' name="+i+" class='form-group filenamecnt'><td name=uploadBtn>"+list1[i]+"</td><div align=right>	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick='deleteFileData("+i+")'>삭제 </a><input type=hidden  readonly name=onlyFileName value="+list1[i]+">")
-				
-											}
 
 											var list2 = new Array();
 											
@@ -709,13 +703,26 @@
 												list2.push("${onlyTempName}");
 				
 											</c:forEach>
+
+										var list3 = new Array();
+											
+											<c:forEach items="${profilePath}" var="profilePath">
 				
-											for ( var i = 0; i < list2.length; i++) {
+											list3.push("${profilePath}");
 				
-												$("[name=file_name]").append("<input type=hidden class=onlyTempName"+i+" name=onlyTempName value="+list2[i]+">")
+											</c:forEach>
+				
+											for ( var i = 0; i < list1.length; i++) {
+
+												var path=encodeuricomponent(list3[i]+"/"+list2[i])
+												
+												$("[name=file_name]").append("<div style='display: flex;' name="+i+" class='form-group filenamecnt'><td data-path="+list3[i]+" data-uuid="+list2[i]+" data-filename="+list1[i]+">"+list1[i]+)
+				
+												$("[name=file_name]").append("<div style='display: flex;' name="+i+" class='form-group filenamecnt'><td >"+list1[i]+"</td><div align=right>	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick='deleteFileData("+i+")'>삭제 </a><input type=hidden  readonly name=onlyFileName value="+list1[i]+"><input type=hidden class=onlyTempName"+i+" name=onlyTempName value="+list3[i]+list2[i]+">")
 				
 											}
- 							 
+
+		 
  							 </script>
  	 					<tr>
                         <td name=tempname >
