@@ -157,7 +157,7 @@ public class BoardController {
 		} else {
 
 			for (int i = 0; i < mf.size(); i++) {
-				System.out.println("시작");
+
 				// 파일 중복명 처리
 				String genId = UUID.randomUUID().toString();
 				// 본래 파일명
@@ -176,7 +176,7 @@ public class BoardController {
 				hm.put("saveFileName", saveFileName);
 				hm.put("fileSize", fileSize);
 
-				newEmpInsertCnt2 = this.boardService.getNewEmpInsertCnt2(hm);
+				newEmpInsertCnt2 = this.boardService.getfilenameUpCnt(hm);
 
 				System.out.println("111=====" + newEmpInsertCnt2);
 			}

@@ -870,13 +870,39 @@ $('[name=checkPwdForUp]').click(function() {
 							<th width="20%" align=center >파일이름<br>(파일 개수 : <c:out value="${file_cnt}" escapeXml="true" default="${file_cnt}"/>개)
 							<td name=file_name align=center><b>
 							
-							<c:forEach items="${onlyFileName}" var="onlyFileName"  varStatus="status">
+				<%-- 			<c:forEach items="${onlyFileName}" var="onlyFileName"  varStatus="status">
 	 				 	  		<div style='display: flex;' align='left'>
 									<c:out value="${onlyFileName}" escapeXml="true" default="${onlyFileName}"/>
 							 
 									<button type="button" onClick="goFiledownForm('${onlyTempName[status.index]}')">파일 다운받기</button> 
 								</div><br>
 							</c:forEach> 
+		  --%>
+		 
+						<script>
+							 var list1 = new Array();
+
+							<c:forEach items="${onlyFileName}" var="onlyFileName">
+
+							list1.push("${onlyFileName}");
+
+							</c:forEach>
+							
+							var list2 = new Array();
+							
+							<c:forEach items="${onlyTempName}" var="onlyTempName">
+
+							list2.push("${onlyTempName}");
+
+							</c:forEach>
+							
+							for ( var i = 0; i < list1.length; i++) {
+
+								$("[name=file_name]").append("<div style='display:flex;' name="+i+" class='form-group filenamecnt'><div align=right><a style='text-decoration: none; color: blue; cursor:pointer;' onclick=goFiledownForm('"+list2[i]+"')>"+list1[i]+"</a>")
+							}
+		
+		 
+						 </script>
 		 
 							
   						<tr> 

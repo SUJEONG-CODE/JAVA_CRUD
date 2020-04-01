@@ -500,9 +500,9 @@
 		 }
 
  
-	
+	/* 
 		 if($("input[name=uploadBtn]").length<5){
-			 
+			  */
 				cnt++;
 				
 				     var str = "<div style='display: flex;' class='form-group'><input type='file' id='uploadBtn' class="+cnt+" name='uploadBtn'><span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' name='file-delete'>삭제</a></div> ";
@@ -516,13 +516,13 @@
 				    	});
 			   
 	
-			}else{
+	/* 		}else{
 	
 				alert("파일 업로드 횟수가 초과하였습니다.");
 				cnt=$("input[name=uploadBtn]").length;
 				  
 			}
-	 
+	  */
 
 	}
 
@@ -679,7 +679,7 @@
 						</c:otherwise>
 					</c:choose> 
 					 --%>
-					<div class="container">
+					<div class="container"> 
 					<table class="table table-condensed" id="regTable">
 						<tr>	
 							<th class="active">작성자 
@@ -699,8 +699,8 @@
 						<tr>
 							<th class="active">파일 업로드
 							<td>
-							<div style="color:#aaa; text-align: left;" class='helpA'><br>"파일업로드는 최대 5개까지 가능합니다"</div><br>
-							<div class="form-group" id="file-list">
+<!-- 							<div style="color:#aaa; text-align: left;" class='helpA'><br>"파일업로드는 최대 5개까지 가능합니다"</div><br>
+ -->							<div class="form-group" id="file-list">
                           
  								  <div align='right'>
 <!--  								  	<a style='text-decoration: none; color: blue;' href="#this" onclick="addFile(this.form)">파일추가 </a>

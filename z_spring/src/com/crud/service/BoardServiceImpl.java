@@ -413,8 +413,8 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int getfilenameUpCnt(HashMap<String, Object> hm) {
 
-		int newEmpInsertCnt = this.boardDAO.getfilenameUpCnt(hm);
-		return newEmpInsertCnt;
+		int newEmpInsertCnt2 = this.boardDAO.getfilenameUpCnt(hm);
+		return newEmpInsertCnt2;
 	};
 
 	@Override

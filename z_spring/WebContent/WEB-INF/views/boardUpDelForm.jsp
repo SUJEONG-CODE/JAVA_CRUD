@@ -523,7 +523,7 @@
 			     }
 			 }
 
-			 if($("input[name=uploadBtn]").length+$(".filenamecnt").length<5 ){
+			/*  if($("input[name=uploadBtn]").length+$(".filenamecnt").length<5 ){ */
 					cnt++;	
 					     var str = "<div style='display: flex;' class='form-group'><input type='file' id='uploadBtn' class="+cnt+" name='uploadBtn'><span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' name='file-delete'>삭제</a></div> ";
 					     $("#file-list").append(str);
@@ -531,12 +531,12 @@
 					    	    e.preventDefault();
 					    	    deleteFile($(this));		    	   
 					    	}); 		
-				}else{
+				/* }else{
 		
 					alert("파일 업로드 횟수가 초과하였습니다.");
 					cnt=$("input[name=uploadBtn]").length;
 					  
-				}
+				} */
 		}
 
 
@@ -786,7 +786,7 @@
  	 					<tr>
                         <td name=tempname >
                         			 
-                           	<div style="color:#aaa; text-align: left;" class='helpA'><br>"파일업로드는 최대 5개까지 가능합니다"</div> 
+                          <!--  	<div style="color:#aaa; text-align: left;" class='helpA'><br>"파일업로드는 최대 5개까지 가능합니다"</div>  -->
                           
                            <div class="form-group" id="file-list">
                           

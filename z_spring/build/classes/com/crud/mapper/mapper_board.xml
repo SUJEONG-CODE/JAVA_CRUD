@@ -664,8 +664,8 @@
 		) values
  
 		( 	(select nvl(max(file_no), 0)+1 from onlyfile_list_board)
-			,#{b_no}
-			,#{temp_nameUp}
+			,(select max(b_no) from board_no_id)
+			,#{originalfileName}
 			,#{fileSize}
 			,#{saveFileName}
 		)
