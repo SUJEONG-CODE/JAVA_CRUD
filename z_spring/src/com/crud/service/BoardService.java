@@ -82,6 +82,8 @@ public interface BoardService {
 
 	List<Object> getOnlytemp_name(int b_no);
 
+	List<Object> getProfilePath(int b_no);
+
 	// 엑셀 저장 현재페이지
 	List<Map<String, String>> getExcelBoardList(BoardSearchDTO boardSearchDTO);
 

@@ -356,6 +356,12 @@ public class BoardServiceImpl implements BoardService {
 		return onlyTempName;
 	};
 
+	@Override
+	public List<Object> getProfilePath(int b_no) {
+		List<Object> profilePath = this.boardDAO.getProfilePath(b_no);
+		return profilePath;
+	};
+
 	// 엑셀 저장 현재피이지
 	@Override
 	public List<Map<String, String>> getExcelBoardList(BoardSearchDTO boardSearchDTO) {

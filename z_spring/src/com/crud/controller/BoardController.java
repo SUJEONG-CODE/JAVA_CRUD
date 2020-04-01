@@ -175,6 +175,7 @@ public class BoardController {
 				hm.put("originalfileName", originalfileName);
 				hm.put("saveFileName", saveFileName);
 				hm.put("fileSize", fileSize);
+				hm.put("profilePath", profilePath);
 
 				newEmpInsertCnt2 = this.boardService.getfilenameUpCnt(hm);
 
@@ -284,6 +285,7 @@ public class BoardController {
 
 			List<Object> onlyFileName = this.boardService.getOnlyFileName(b_no);
 			List<Object> onlyTempName = this.boardService.getOnlytemp_name(b_no);
+			List<Object> profilePath = this.boardService.getProfilePath(b_no);
 
 			mav.addObject("onlyFileName", onlyFileName);
 			mav.addObject("onlyTempName", onlyTempName);
@@ -378,6 +380,7 @@ public class BoardController {
 						hm.put("saveFileName", saveFileName);
 						hm.put("fileSize", fileSize);
 						hm.put("b_no", b_no);
+						hm.put("profilePath", profilePath);
 
 						newEmpInsertCnt1 = this.boardService.getNewEmpInsertCnt2(hm);
 						boardUpDelCnt = newEmpInsertCnt1;
@@ -636,7 +639,7 @@ public class BoardController {
 				hm.put("originalfileName", originalfileName);
 				hm.put("saveFileName", saveFileName);
 				hm.put("fileSize", fileSize);
-
+				hm.put("profilePath", profilePath);
 				newEmpInsertCnt1 = this.boardService.getNewEmpInsertCnt1(hm);
 
 				System.out.println("111=====" + newEmpInsertCnt1);

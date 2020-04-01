@@ -339,6 +339,13 @@ public class BoardDAOImpl implements BoardDAO {
 
 	};
 
+	@Override
+	public List<Object> getProfilePath(int b_no) {
+		List<Object> profilePath = this.sqlSession.selectList(sqlSessionPath + "getProfilePath", b_no);
+		return profilePath;
+
+	};
+
 	// ------------------------------------------------------------------------
 
 	// 엑셀 저장 현재페이지

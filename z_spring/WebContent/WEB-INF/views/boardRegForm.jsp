@@ -341,16 +341,7 @@
 					$("[name=subject]").focus();
 					return;
 				}
-				/* if(is_empty("[name=email]")){
-					alert("이메일을 입력해 주세요.");
-					$("[name=email]").focus();
-					return;
-				}
-				if( is_valid_email("[name=email]")==false ){
-					alert("이메일 형식을 벗어납니다.");
-					return;
-				} */
-				/* return; */
+ 
 				if(is_empty("[name=content]")){
 					alert("내용 입력해 주세요.");
 					 
@@ -377,15 +368,7 @@
 				 }
 	 
  
-				
-			/* 	if(confirm('정말 저장하시겠습니까?') == false){
-					return;
-				}
-				 */
-				
-				/* alert( $('[name=boardRegForm]').serialize() );
-				return;
-				 */
+ 
 				//===========================================================================
 				// 현재 화면에서 페이지 이동 없이 서버쪽 "/z_spring/boardRegProc.do"를 호출하여 
 				// 게시판 글을 입력하고 [게시판 입력 행 적용 개수]를 받기
