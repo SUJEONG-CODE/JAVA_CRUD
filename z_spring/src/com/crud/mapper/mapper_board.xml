@@ -527,15 +527,17 @@
 	
 	
 	<select id="getOnlyFileName" parameterType="int" resultType="String">
-	select 
-			to_char(file_name)	as "file_name"
-    from  onlyfile_list_board where b_no=#{b_no}
+	 select   
+		to_char(file_name)	as "file_name"
+    from  onlyfile_list_board where b_no=#{b_no}  order by  file_reg_date desc
+     
 	</select>
 	
 	<select id="getOnlytemp_name" parameterType="int" resultType="String">
-	select 
-			to_char(temp_name)	as "temp_name"
-    from  onlyfile_list_board where b_no=#{b_no}
+	select   
+		to_char(temp_name)	as "temp_name"
+    from  onlyfile_list_board where b_no=#{b_no}  order by  file_reg_date desc
+ 
 	</select>
 <!--////////////////////////////////////////////////////////////  -->	
 	

@@ -78,21 +78,7 @@
 
 
 		$(document).ready(function(){	
-
  
-			 
-		/* 		<div style='display: flex;' class='form-group filenamecnt' name="${status.index}" >
-				<c:out value="${onlyFileName}" escapeXml="true" default="${onlyFileName}" />
-						<span style='text-align: right;'>
-
-						 	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick="deleteFileData(${status.index})">삭제 </a>
-						 
-						</span>
-		     
-				</div>
-			  */
-			//==================================================================
-			//글자수 제한 유효성 검사 시작
 	
  		//이름 유효성 검사하기------------------------------------------
 		$('#regTable').find('[name=writer]').keyup(function (e){
@@ -287,6 +273,11 @@
 			// 삭제버튼을 누르고 취소하게 되면 name=upDel에 "del" 들어간다.
 			// 그리고 수정버튼을 누르면 name=upDel 에 "del"이 들어간 상태에서 
 			//  수정이 진행되므로 올바른 수정이 진행되지 않는다.
+			
+		 
+			
+			
+			
 			$("[name=upDel]").val("up");
 
 			if( is_empty("[name=writer]") ){
@@ -396,66 +387,7 @@
 
 
 
-}    
-		/* //======================================================================
-		// 현재 화면에서 페이지 이동없이 서버쪽 /z_spring/boardUpDelProc.do를 호출하여
-		// 게시판 수정 또는 삭제 적용 개수를 받는다.
-		//======================================================================
-		$.ajax({
-			// 호출할 서버쪽 URL 주소 설정
-			url : "/z_spring/boardUpDelProc.do"	
-			// 전송할 방법 설정
-			, type : "post"
-			// 서버로 보낼 파라미터명과 파라미터값을 설정.		serialize = 파라미터명과 파라미터값을 잘 만들어줌.
-			, data : $("[name=boardUpDelForm]").serialize()
-			// 서버의 응답을 성공적으로 받았을 경우 실행할 익명함수 설정.
-			// 매개변수 upDelCnt 에는 게시판 수정 또는 삭제 적용 개수가 들어온다.
-			, success : function(upDelCnt){
-				if( upDel=="up"){
-						
-						if(upDelCnt == 1){
-							//alert("게시글의 수정이 완료되었습니다.");
-						 	location.replace('/z_spring/boardListForm.do');
-						}
-						else if(upDelCnt==-1){
-							alert("게시글이 삭제되어 수정할 수 없습니다.");
-						}
-						else if(upDelCnt==-2){
-							alert("비밀번호가 잘못 입력 되었습니다.");
-						}
-						else {
-							alert("서버쪽 DB 연동 실패!");
-						}
-						
-				}
-					else if(upDel=="del"){
-						if(upDelCnt == 1){
-							//alert("게시글의 삭제가 완료되었습니다.");
-						 	location.replace('/z_spring/boardListForm.do');
-						}
-						else if(upDelCnt==-1){
-							alert("이미 삭제된 게시물입니다.");
-						}
-						else if(upDelCnt==-2){
-							alert("비밀번호가 잘못 입력 되었습니다.");
-						}
-						else if(upDelCnt==-3){
-							alert("댓글이 있어 삭제 불가능합니다.");
-						}
-						else {
-							alert("서버쪽 DB 연동 실패!");
-						}
- 					}
-				}
-			// 서버의 응답을 못받을 경우 실행할 익명함수 설정.
-			, error : function(){
-			alert("서버 접속 실패");
-		}
-			
-		}); 
-		
-	}*/
-	
+}      W
  
 
 		//회원가입
@@ -474,11 +406,14 @@
 			 var countNum=cntFile
 	 
 			// alert($(this).parent().siblings().val());
- 
+
+			 var str="onlyTempName="+$(".onlyTempName"+cntFile).val()
+			 $("[name="+cntFile+"]").hide();	
+
+		}
 			 
-			 var str="onlyTempName="+$(".onlyTempName"+cntFile).val();
-			 $("[name="+cntFile+"]").remove();
-			
+ /*  		 var str="onlyTempName="+$(".onlyTempName"+cntFile).val();
+  
 	  		$.ajax({
 				url : "/z_spring/fileDelProc.do"	
 				, type : "post"
@@ -499,10 +434,9 @@
 				}
 				
 			}); 
+  */
  
- 
- 
-		}
+  
 
 		var cnt=1;
 
@@ -796,8 +730,8 @@
  								</div>  
  	 
  							 <div style='display: flex;' class="file-group"  name="fileDeleteOriginal">
-					           <input type="file" id="uploadBtn" class=1 name="uploadBtn"> 
-					           <span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' onclick="fileDeleteOriginal()">삭제</a></span> 
+					          <!--  <input type="file" id="uploadBtn" class=1 name="uploadBtn"> 
+					           <span style='text-align: left;'><a style='text-decoration: none; color: blue;' href='#this' onclick="fileDeleteOriginal()">삭제</a></span>  -->
 					        </div>  
 					        <br>
  						 </div>
