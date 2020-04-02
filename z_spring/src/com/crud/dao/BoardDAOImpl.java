@@ -401,6 +401,13 @@ public class BoardDAOImpl implements BoardDAO {
 	};
 
 	@Override
+	public int getNewEmpInsertCnt3(HashMap<String, Object> hm) {
+
+		int newEmpInsertCnt3 = this.sqlSession.insert(sqlSessionPath + "getNewEmpInsertCnt3", hm);
+		return newEmpInsertCnt3;
+	};
+
+	@Override
 	public int getfilenameUpCnt(HashMap<String, Object> hm) {
 
 		int newEmpInsertCnt2 = this.sqlSession.insert(sqlSessionPath + "getfilenameUpCnt", hm);

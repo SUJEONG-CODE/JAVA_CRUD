@@ -99,6 +99,8 @@ public interface BoardService {
 
 	int getNewEmpInsertCnt2(HashMap<String, Object> hm);
 
+	int getNewEmpInsertCnt3(HashMap<String, Object> hm);
+
 	int getfilenameUpCnt(HashMap<String, Object> hm);
 
 	List<Map<String, Integer>> getEmp_noForFile(FileUpDTO fileUpDTO);

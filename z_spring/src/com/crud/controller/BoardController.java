@@ -168,6 +168,7 @@ public class BoardController {
 				// File localFile = new File(profilePath + saveFileName);
 				String savePath = profilePath + saveFileName;
 				mf.get(i).transferTo(new File(savePath));
+
 				long fileSize = mf.get(i).getSize(); // �뙆�씪 �궗�씠利�
 				int b_no = BoardDTO.getB_no();
 
@@ -332,8 +333,8 @@ public class BoardController {
 			// 파라미터값을 저장할 BoardDTO 객체 를 매개변수로 선언
 			// =============================================
 			@RequestParam(value = "upDel") String upDel, BoardDTO boardDTO, MultipartHttpServletRequest multi,
-			@RequestParam(value = "uploadBtn") MultipartFile[] file, @RequestParam(value = "onlyFileName") MultipartFile[] onlyFileName,
-			@RequestParam(value = "onlyTempName") MultipartFile[] onlyTempName) {
+			@RequestParam(value = "uploadBtn") MultipartFile[] file, @RequestParam(value = "onlyFileName") String[] onlyFileName,
+			@RequestParam(value = "onlyTempName") String[] onlyTempName) {
 		// =============================================
 		// 수정 또는 삭제 적용행의 개수가 저장되는 변수 선언.
 		// =============================================
@@ -341,6 +342,7 @@ public class BoardController {
 		int UpdeleteFileBoardCnt = 0;
 		// int newEmpInsertCnt = 0;
 		int newEmpInsertCnt1 = 0;
+		int newEmpInsertCnt3 = 0;
 		// System.out.println("boardUpDelProc �떆�옉");
 		try {
 			// =============================================
@@ -352,16 +354,49 @@ public class BoardController {
 
 				File dir = new File(profilePath);
 
-				List<MultipartFile> onlyFileName1 = multi.getFiles("onlyFileName");
-				System.out.println(onlyFileName1);
-				List<MultipartFile> onlyTempName1 = multi.getFiles("onlyTempName");
-				System.out.println(onlyTempName1);
+	/*			for (int i = 0; i < onlyTempName.length; i++) {
 
-				if (!dir.isDirectory()) {
+					String path = "C:/imagecollection/";
+					String temp_nameDel = onlyTempName[i];
+					File fileDel = new File(path + temp_nameDel);
+					if (fileDel.exists() == true) {
+						fileDel.delete();
+					}
+				}*/
+		 
+				boardUpDelCnt = this.boardService.updateBoard(boardDTO);
+				UpdeleteFileBoardCnt = this.boardService.deleteFileBoard(boardDTO);
+
+				/*if (!dir.isDirectory()) {
 					dir.mkdir();
 				}
+				for (int i = 0; i < onlyFileName.length; i++) {
+
+					String genId = UUID.randomUUID().toString();
+					String originalfileName = onlyFileName[i];
+					originalfileName = originalfileName.trim().toLowerCase().replaceAll(" ", "");
+					int position = originalfileName.lastIndexOf(".");
+					String saveFileName = genId + originalfileName.substring(position);
+					String path = "C:/imagecollection/";
+					String savePath = profilePath + saveFileName;
+					File fileup = new File(savePath);
+
+					long fileSize = fileup.length();
+					int b_no = boardDTO.getB_no();
+					HashMap<String, Object> hm = new HashMap<>();
+					hm.put("originalfileName", originalfileName);
+					hm.put("saveFileName", saveFileName);
+					hm.put("fileSize", fileSize);
+					hm.put("b_no", b_no);
+					hm.put("profilePath", profilePath);
+
+					newEmpInsertCnt1 = this.boardService.getNewEmpInsertCnt2(hm);
+					boardUpDelCnt = newEmpInsertCnt1;
+
+				}*/
 
 				List<MultipartFile> mf = multi.getFiles("uploadBtn");
+				System.out.println(mf);
 
 				if (mf.size() == 1 && mf.get(0).getOriginalFilename().equals("")) {
 
@@ -402,10 +437,10 @@ public class BoardController {
 
 				// System.out.println(boardDTO.getGroup_count());
 
-				for (int i = 0; i < boardDTO.getOnlyTempName().length; i++) {
+				for (int i = 0; i < onlyTempName.length; i++) {
 
 					String path = "C:/imagecollection/";
-					String temp_nameDel = boardDTO.getOnlyTempName()[i];
+					String temp_nameDel = onlyTempName[i];
 					File fileDel = new File(path + temp_nameDel);
 					if (fileDel.exists() == true) {
 						fileDel.delete();

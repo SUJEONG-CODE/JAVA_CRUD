@@ -637,7 +637,8 @@
 	</delete>
   
  
- 
+
+	
  	
 	<insert id="getNewEmpInsertCnt1" parameterType="hashmap">
 		insert into onlyfile_list o(file_no, emp_no, file_name, contents_type, temp_name,profilePath
@@ -667,6 +668,22 @@
 		)
 	 
 	</insert>
+	
+	 <insert id="getNewEmpInsertCnt3" parameterType="hashmap">
+		insert into onlyfile_list_board o(file_no, b_no, file_name, contents_type, temp_name,profilePath
+		) values
+ 
+		( 	(select nvl(max(file_no), 0)+1 from onlyfile_list_board)
+			,(select b_no from board_no_id where b_no=#{b_no})
+			,#{originalfileName}
+			,#{fileSize}
+			,#{saveFileName}
+			,#{profilePath}
+		)
+	 
+	</insert>
+	
+	
 	
 	
 	<insert id="getfilenameUpCnt" parameterType="hashmap">

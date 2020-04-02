@@ -78,7 +78,63 @@
 
 
 		$(document).ready(function(){	
- 
+
+
+
+			var list1 = new Array();
+
+			<c:forEach items="${onlyFileName}" var="onlyFileName">
+
+			list1.push("${onlyFileName}");
+
+			</c:forEach>
+
+			var list2 = new Array();
+			
+			<c:forEach items="${onlyTempName}" var="onlyTempName">
+
+				list2.push("${onlyTempName}");
+
+			</c:forEach>
+
+			var list3 = new Array();
+			
+			<c:forEach items="${profilePath}" var="profilePath">
+
+			list3.push("${profilePath}");
+
+			</c:forEach>
+
+			for ( var i = 0; i < list1.length; i++) {
+
+			 
+
+				var appendTd1="<div style='display: flex;' name="+i+" class='form-group filenamecnt'>"
+				appendTd1 +="<td name=filename"+i+" data-path='"+list3[i]+"' data-uuid='"+list2[i]+"' data-filename='"+list1[i]+"'>"+list1[i]+"</td>" 
+				appendTd1 +="<div align=right>"
+				appendTd1 +="<a style='text-decoration: none; color: blue; cursor:pointer;' onclick='deleteFileData("+i+")'>삭제 </a>"
+				appendTd1 +="<input type=hidden name=onlyFileName class=goFile"+i+" value="+list1[i]+">"	
+				appendTd1 +="<input type=hidden name=onlyTempName class=goFile"+i+" value="+list2[i]+">"	
+				appendTd1 +="<input type=hidden name=profilePath class=goFile"+i+" value="+list3[i]+">"	
+				
+				$("[name=file_name]").append(appendTd1)
+
+					
+		/* 		var appendTd1="<div style='display: flex;' name="+i+" class='form-group filenamecnt'>"
+				appendTd1 +="<td >"+list1[i]+"</td>" 
+				appendTd1 +="<div align=right>"
+				appendTd1 +="<a style='text-decoration: none; color: blue; cursor:pointer;' onclick='deleteFileData("+i+")'>삭제 </a>"
+				appendTd1 +="<input type=hidden  readonly name=onlyFileName value="+list1[i]+"><input type=hidden class=onlyTempName"+i+" name=onlyTempName value="+list3[i]+list2[i]+">"
+					
+	
+				$("[name=file_name]").append(appendTd1) */
+
+			}
+
+
+
+
+			
 	
  		//이름 유효성 검사하기------------------------------------------
 		$('#regTable').find('[name=writer]').keyup(function (e){
@@ -325,9 +381,26 @@
   			
 		}
 
-
 		 var form = $('[name=boardUpDelForm]')[0];
-	     
+ 
+/* 		var str="";
+	 
+		 for(var i=0; i<$("input[name=onlyTempName]").length; i++){
+ 
+			 str += $("input[name=profilePath], .goFile"+i).val();
+			 str += $("input[name=onlyTempName], .goFile"+i).val();
+			 str += $("input[name=onlyFileName], .goFile"+i).val();
+ 
+			 alert($("[name=filename"+i+"] .goFile1").val())
+		alert(str);
+			 form.append(str);  
+		 
+			 alert($("input[name=uploadBtn]").val());
+			 return;
+		 }
+  */
+		 
+  
 			var formData = new FormData(form);
 
 
@@ -387,7 +460,7 @@
 
 
 
-}      W
+}       
  
 
 		//회원가입
@@ -404,11 +477,15 @@
 		function deleteFileData(cntFile){
 		 
 			 var countNum=cntFile
-	 
+ 
 			// alert($(this).parent().siblings().val());
 
 			 var str="onlyTempName="+$(".onlyTempName"+cntFile).val()
-			 $("[name="+cntFile+"]").hide();	
+			 $("[name="+cntFile+"]").remove();	
+
+
+			 alert( $(".goFile1").val());
+			 $(".goFile"+cntFile).remove();	
 
 		}
 			 
@@ -660,9 +737,9 @@
 							<th class="active">내용
 							<td><form:textarea path="content" className="content" rows="13" cols="40" class="form-control" name="content" />
 							<span style="color:#aaa; text-align: right;" name="counter">(0 / 최대 1000자)</span>
-						<tr > 
+						<tr name=file_name > 
 							<th   rowspan=2 class="active">파일이름
-							<td name=file_name align=center ><b>
+							 
  					 		<%-- <c:forEach items="${onlyFileName}" var="onlyFileName"  varStatus="status">
 	 				 	  		<div style='display: flex;' class='form-group filenamecnt' name="${status.index}" >
 							 	<c:out value="${onlyFileName}" escapeXml="true" default="${onlyFileName}"  />  
@@ -687,43 +764,7 @@
 		 							 
 							</c:forEach>   	 --%>
 							
-							<script>
-											var list1 = new Array();
-				
-											<c:forEach items="${onlyFileName}" var="onlyFileName">
-				
-											list1.push("${onlyFileName}");
-				
-											</c:forEach>
-
-											var list2 = new Array();
-											
-											<c:forEach items="${onlyTempName}" var="onlyTempName">
-				
-												list2.push("${onlyTempName}");
-				
-											</c:forEach>
-
-										var list3 = new Array();
-											
-											<c:forEach items="${profilePath}" var="profilePath">
-				
-											list3.push("${profilePath}");
-				
-											</c:forEach>
-				
-											for ( var i = 0; i < list1.length; i++) {
-
-												var path=encodeuricomponent(list3[i]+"/"+list2[i])
-												
-												$("[name=file_name]").append("<div style='display: flex;' name="+i+" class='form-group filenamecnt'><td data-path="+list3[i]+" data-uuid="+list2[i]+" data-filename="+list1[i]+">"+list1[i]+)
-				
-												$("[name=file_name]").append("<div style='display: flex;' name="+i+" class='form-group filenamecnt'><td >"+list1[i]+"</td><div align=right>	<a style='text-decoration: none; color: blue; cursor:pointer;' onclick='deleteFileData("+i+")'>삭제 </a><input type=hidden  readonly name=onlyFileName value="+list1[i]+"><input type=hidden class=onlyTempName"+i+" name=onlyTempName value="+list3[i]+list2[i]+">")
-				
-											}
-
-		 
- 							 </script>
+						 
  	 					<tr>
                         <td name=tempname >
                         			 
